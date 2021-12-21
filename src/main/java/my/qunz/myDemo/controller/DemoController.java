@@ -57,4 +57,20 @@ public class DemoController {
         return Res.createBySuccess("success", list);
     }
 
+    @GetMapping("/app3")
+    public Res list3() {
+        DruidDataSource druidDataSource = new DruidDataSource();
+        druidDataSource.setUrl("jdbc:mysql://124.70.83.151:3306/bim_platform_home_prod?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true");
+        druidDataSource.setUsername("root");
+        druidDataSource.setPassword("Cccc@bim123");
+        DynamicDataSource.dataSourcesMap.put("prod", druidDataSource);
+        DynamicDataSource.setDataSource("prod");
+//        此时数据源已切换到druidDataSource ，调用自己的业务方法即可。
+//        使用完后调用DynamicDataSource.clear();重置为默认数据源。
+        LambdaQueryWrapper<AppService> queryWrapper = Wrappers.lambdaQuery(AppService.class).orderByAsc(AppService::getSort);
+        List<AppService> list = appServiceService.list(queryWrapper);
+        DynamicDataSource.clear();
+        return Res.createBySuccess("success", list);
+    }
+
 }
